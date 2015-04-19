@@ -1,7 +1,10 @@
-package org.proboscis;
+package test.hamcrest.proboscis;
 
 import org.hamcrest.Description;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.proboscis.Probe;
+import org.hamcrest.proboscis.Prober;
+import org.hamcrest.proboscis.UnsynchronizedProber;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.containsString;

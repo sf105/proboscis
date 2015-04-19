@@ -1,4 +1,4 @@
-package org.proboscis;
+package org.hamcrest.proboscis;
 
 public class Timeout {
     private final long duration;

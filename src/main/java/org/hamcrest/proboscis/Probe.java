@@ -1,4 +1,4 @@
-package org.proboscis;
+package org.hamcrest.proboscis;
 
 import org.hamcrest.Description;
 import org.hamcrest.SelfDescribing;
