@@ -3,6 +3,10 @@ package org.hamcrest.proboscis;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 
+/**
+ * Useful template for creating single value probes.
+ * @param <T> The type of the value.
+ */
 public abstract class ValueMatchingProbe<T> implements Probe {
     private final Matcher<? super T> criteria;
     private T snapshot;
@@ -11,7 +15,16 @@ public abstract class ValueMatchingProbe<T> implements Probe {
         this.criteria = criteria;
     }
 
+    /**
+     * Take a snapshot of the value to be probed for.
+     * @return The snapshot value.
+     */
     protected abstract T snapshotValue();
+
+    /**
+     * Describe the meaning of the value
+     * @param description Description to write to
+     */
     protected abstract void describeValueTo(Description description);
 
 

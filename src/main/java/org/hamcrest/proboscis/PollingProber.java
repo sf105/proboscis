@@ -2,6 +2,9 @@ package org.hamcrest.proboscis;
 
 import org.hamcrest.StringDescription;
 
+/**
+ * Base class for Probers that repeatedly apply a probe until it succeeds or times out.
+ */
 public abstract class PollingProber implements Prober {
     private long timeoutMillis;
     private long pollDelayMillis;
@@ -11,13 +14,17 @@ public abstract class PollingProber implements Prober {
         this.pollDelayMillis = pollDelayMillis;
     }
 
+    /**
+     * Apply the given probe within the polling loop.
+     * @param probe The probe to apply.
+     */
+    protected abstract void runProbe(Probe probe);
+
     public void check(Probe probe) {
         if (!poll(probe)) {
             throw new AssertionError(failureDescriptionOf(probe));
         }
     }
-
-    protected abstract void runProbe(Probe probe);
 
     protected String failureDescriptionOf(Probe probe) {
         final StringDescription description = new StringDescription();
