@@ -12,3 +12,7 @@
 hs_err_pid*
 .idea
 target
+.gradle
+*.iml
+*.ipr
+*.iws

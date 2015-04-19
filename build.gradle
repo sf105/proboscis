@@ -1,0 +1,99 @@
+import static org.gradle.api.JavaVersion.VERSION_1_8
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+sourceCompatibility = VERSION_1_8
+targetCompatibility = VERSION_1_8
+archivesBaseName = "proboscis"
+
+group = "org.hamcrest"
+version = "0.0.1"
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile('org.hamcrest:java-hamcrest:2.0.0.0')
+    testCompile(group: 'junit', name: 'junit', version: '4.12') {
+        transitive = false
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'proboscis',
+                'Implementation-Vendor': 'hamcrest.org',
+                'Implementation-Version': version
+    }
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+uploadArchives {
+    if (hasProperty('ossrhUsername') && hasProperty('ossrhPassword')) {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                pom.project {
+                    name 'Java Proboscis'
+                    packaging 'jar'
+                    description 'Probing library for Java'
+                    url 'https://github.com/sf105/proboscis'
+
+                    scm {
+                        connection 'git@github.com:sf105/proboscis.git'
+                        url 'https://github.com/sf105/proboscis'
+                    }
+
+                    licenses {
+                        license {
+                            name 'BSD Licence 3'
+                            url 'http://opensource.org/licenses/BSD-3-Clause'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'sf105'
+                            name 'Steve Freeman'
+                        }
+                        developer {
+                            id 'npryce'
+                            name 'Nat Pryce'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
