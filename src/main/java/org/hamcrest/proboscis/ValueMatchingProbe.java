@@ -11,12 +11,14 @@ public abstract class ValueMatchingProbe<T> implements Probe {
         this.criteria = criteria;
     }
 
+    protected abstract T snapshotValue();
+    protected abstract void describeValueTo(Description description);
+
+
     public void probe() {
         snapshot = snapshotValue();
     }
 
-    protected abstract T snapshotValue();
-    
     public boolean isSatisfied() {
         return criteria.matches(snapshot);
     }
@@ -26,8 +28,6 @@ public abstract class ValueMatchingProbe<T> implements Probe {
         description.appendText(" that ")
                    .appendDescriptionOf(criteria);
     }
-
-    protected abstract void describeValueTo(Description description);
 
     public void describeFailureTo(Description description) {
         describeValueTo(description);

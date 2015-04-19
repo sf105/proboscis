@@ -1,87 +1,63 @@
 package test.hamcrest.proboscis;
 
 import org.hamcrest.Description;
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.proboscis.Probe;
 import org.hamcrest.proboscis.Prober;
 import org.hamcrest.proboscis.UnsynchronizedProber;
+import org.junit.Rule;
 import org.junit.Test;
-
-import static org.hamcrest.Matchers.containsString;
+import org.junit.rules.ExpectedException;
 
 
 public class UnsynchronizedProberTest {
     static final int TIMEOUT = 250;
-    
-    Prober prober = new UnsynchronizedProber(TIMEOUT, 50);
+    public static final int LIKELY_NUMBER_OF_PROBES = 3;
+    @Rule public final ExpectedException thrown= ExpectedException.none();
+    final Prober prober = new UnsynchronizedProber(TIMEOUT, 50);
     
     @Test public void
-    assertionFailsIfProbeIsSatisfiedWithinTimeout() {
-        try {
-            prober.check(new Probe() {
-                public void probe() {
-                }
-                
+    assertionFailsIfProbeIsNotSatisfiedWithinTimeout() {
+        thrown.expectMessage("an error description");
+        new UnsynchronizedProber(1, 1).check(
+            new Probe() {
+                public void probe() { }
                 public boolean isSatisfied() {
                     return false;
                 }
-                
                 public void describeTo(Description description) {
-                    description.appendText("error message");
+                    description.appendText("an error description");
                 }
-
-                public void describeFailureTo(Description description) {
-                }
+                public void describeFailureTo(Description description) { }
             });
-        }
-        catch (AssertionError e) {
-            MatcherAssert.assertThat(e.getMessage(), containsString("error message"));
-        }
     }
     
     @Test public void
     assertionPassesIfProbeIsSatisfied() {
-        prober.check(new Probe() {
-            public void probe() {
-            }
-            
-            public boolean isSatisfied() {
+        new UnsynchronizedProber(1, 1).check(
+          new Probe() {
+              public void probe() {}
+              public boolean isSatisfied() {
                 return true;
             }
-            
-            public void describeTo(Description description) {
-            }
-
-            public void describeFailureTo(Description description) {
-            }
-        });
+              public void describeTo(Description description) { }
+              public void describeFailureTo(Description description) { }
+          });
     }
 
     @Test public void
     repeatedlyPollsProbeUntilItIsSatisfied() {
-        final long start = System.currentTimeMillis();
-        
-        prober.check(new Probe() {
-            long probeTime;
-            
-            public void probe() {
-                probeTime = System.currentTimeMillis();
-            }
-            
-            public boolean isSatisfied() {
-                return probeTime-start > 100 ;
-            }
-            
-            public void describeTo(Description description) {
-            }
-
-            public void describeFailureTo(Description description) {
-            }
-        });
+        new UnsynchronizedProber(10, 1).check(
+          new Probe() {
+              int probeCount = 0;
+              public void probe() { probeCount++; }
+              public boolean isSatisfied() { return probeCount > LIKELY_NUMBER_OF_PROBES; }
+              public void describeTo(Description description) { }
+              public void describeFailureTo(Description description) { }
+          });
     }
     
     @Test public void
-    runsProbeOnTestThread() {
+    runsProbeInTestThread() {
         final Thread testThread = Thread.currentThread();
         
         prober.check(new Probe() {

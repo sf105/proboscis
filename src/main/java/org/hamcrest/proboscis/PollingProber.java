@@ -11,43 +11,29 @@ public abstract class PollingProber implements Prober {
         this.pollDelayMillis = pollDelayMillis;
     }
 
-    public long getTimeout() {
-        return timeoutMillis;
-    }
-
-    public void setTimeout(long timeoutMillis) {
-        this.timeoutMillis = timeoutMillis;
-    }
-
-    public long getPollDelay() {
-        return pollDelayMillis;
-    }
-
-    public void setPollDelay(long pollDelayMillis) {
-        this.pollDelayMillis = pollDelayMillis;
-    }
-
     public void check(Probe probe) {
         if (!poll(probe)) {
-            throw new AssertionError(describeFailureOf(probe));
+            throw new AssertionError(failureDescriptionOf(probe));
         }
     }
-    
-    protected String describeFailureOf(Probe probe) {
-        StringDescription description = new StringDescription();
+
+    protected abstract void runProbe(Probe probe);
+
+    protected String failureDescriptionOf(Probe probe) {
+        final StringDescription description = new StringDescription();
    
-        description.appendText("\nTried to find:\n    ");
-        probe.describeTo(description);
-        description.appendText("\nbut:\n    ");
+        description.appendText("\nTried to find:\n    ")
+            .appendDescriptionOf(probe)
+            .appendText("\nbut:\n    ");
         probe.describeFailureTo(description);
 
         return description.toString();
     }
 
     private boolean poll(Probe probe) {
-        Timeout timeout = new Timeout(timeoutMillis);
-    
-        for (;;) {
+        final Timeout timeout = new Timeout(timeoutMillis);
+
+        while (true) {
             runProbe(probe);
             
             if (probe.isSatisfied()) {
@@ -62,8 +48,6 @@ public abstract class PollingProber implements Prober {
         }
     }
     
-    protected abstract void runProbe(Probe probe);
-
     private void waitFor(long duration) {
         try {
             Thread.sleep(duration);
