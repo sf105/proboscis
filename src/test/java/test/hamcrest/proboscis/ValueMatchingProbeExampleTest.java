@@ -2,15 +2,12 @@ package test.hamcrest.proboscis;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
 import org.hamcrest.proboscis.UnsynchronizedProber;
 import org.hamcrest.proboscis.ValueMatchingProbe;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 
 /**
