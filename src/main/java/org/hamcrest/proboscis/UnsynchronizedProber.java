@@ -2,7 +2,7 @@ package org.hamcrest.proboscis;
 
 
 /**
- * The default Prober. Just applies a probe without any further syncrhonization.
+ * The default Prober. Just applies a probe without any further synchronization.
  */
 public class UnsynchronizedProber extends PollingProber {
     public UnsynchronizedProber(long timeoutMillis, long pollDelayMillis) {
