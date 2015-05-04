@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/sf105/proboscis?branch=master)](https://travis-ci.org/sf015/proboscis)
+[![Build Status](https://travis-ci.org/sf105/proboscis?branch=master)](https://travis-ci.org/sf105/proboscis)
 
 Java Proboscis
 =============
